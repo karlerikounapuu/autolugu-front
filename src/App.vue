@@ -30,6 +30,9 @@ export default {
     checkCurrentLogin () {
       if (!this.currentUser && this.$route.path !== '/register' && this.$route.path !== '/') {
         this.$router.push('/?redirect=' + this.$route.path)
+      } else {
+        console.log(localStorage.token)
+        console.log(this.currentUser.UserId)
       }
     }
   },

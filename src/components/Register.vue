@@ -6,7 +6,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-3 col-md-2">
-                        <a href="index.html"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </a>
+                        <router-link to="/"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </router-link>
                     </div>
                     <div class="col-9 col-md-10 text-right">
                         <a href="#" class="hamburger-toggle" data-toggle-class="#menu1;hidden-xs hidden-sm"> <i class="icon icon--sm stack-interface stack-menu"></i> </a>
@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-lg-1 col-md-2 hidden-xs">
                         <div class="bar__module">
-                            <a href="index.html"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </a>
+                            <router-link to="/"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </router-link>
                         </div>
                     </div>
                     <div class="col-lg-12 col-md-10 text-right text-left-xs text-left-sm">
@@ -68,8 +68,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-7"> <span class="type--fine-print">© <span class="update-year">2018</span> Autolugu</span> <a class="type--fine-print" href="#">Kasutustingimused</a> <a class="type--fine-print" href="#">Privaatsus</a> </div>
-                        <div class="col-sm-5 text-right text-center-xs"> <a class="type--fine-print" href="#">devnull@idg.af</a> </div>
+                        <div class="col-sm-7"> <span class="type--fine-print">© <span class="update-year">2018</span> Autolugu</span> <router-link to="/" class="type--fine-print" >Kasutustingimused</router-link> <router-link class="type--fine-print" to="/">Privaatsus</router-link> </div>
+                        <div class="col-sm-5 text-right text-center-xs"> <router-link class="type--fine-print" to="/">devnull@idg.af</router-link> </div>
                     </div>
                 </div>
             </footer>
@@ -131,7 +131,7 @@ export default {
         if (res.response.data.errors) {
           var vm = this
           vm.errors = []
-          res.response.data.errors.forEach(function(err) {
+          res.response.data.errors.forEach(function (err) {
             // console.log(err.description)
             vm.errors.push(err['description'])
             // Vue.toasted.show(err.description);
@@ -143,11 +143,10 @@ export default {
         }
       }
       console.log(this.errors)
-      var vm = this
-      this.errors.forEach(function(err) {
+      this.errors.forEach(function (err) {
         vm.$toasted.show(err).goAway(5000)
       })
-      this.error = "Kasutaja registreerimine ebaõnnestus."
+      this.error = 'Kasutaja registreerimine ebaõnnestus.'
     }
   }
 }

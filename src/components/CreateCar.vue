@@ -94,7 +94,7 @@ export default {
         .then((response) => {
           // console.log(response)
           response.data.forEach((obj) => {
-            this.$toasted.show('Found something!').goAway(3000)
+            // this.$toasted.show('Found something!').goAway(3000)
             this.options_carmodel.push({text: obj.name, value: obj.modelId})
           })
           this.$toasted.show('Car models populated!').goAway(3000)
@@ -107,10 +107,10 @@ export default {
     },
     registercar () {
       this.$http.post('/api/car', {
-        name: this.firstname,
-        year: this.lastname,
-        variant: this.email,
-        description: this.password,
+        name: this.carname,
+        year: this.caryear,
+        variant: this.carvariant,
+        description: this.cardescription,
         makeId: this.make_selected,
         modelId: this.model_selected
       }).then(request => this.registerSuccessful(request))
@@ -126,6 +126,7 @@ export default {
       //  localStorage.token = req.data
       //  this.$store.dispatch('login')
       this.$toasted.show(this.carname + ' edukalt lisatud!').goAway(3000)
+      // this.$toasted.show(this.carname)
       this.$router.push({ path: '/' })
     },
     registerFailed (req) {

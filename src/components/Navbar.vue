@@ -5,7 +5,7 @@
         <div class="container">
           <div class="row">
             <div class="col-3 col-md-2">
-              <a href="index.html"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/img/logo-light.png"> </a>
+              <router-link to="/"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/img/logo-light.png"> </router-link>
             </div>
             <div class="col-9 col-md-10 text-right">
               <a href="#" class="hamburger-toggle" data-toggle-class="#menu1;hidden-xs hidden-sm"> <i class="icon icon--sm stack-interface stack-menu"></i> </a>
@@ -18,7 +18,7 @@
           <div class="row">
             <div class="col-lg-1 col-md-2 hidden-xs">
               <div class="bar__module">
-                <a href="index.html"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/imyg/logo-light.png"> </a>
+                <router-link to="/"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/imyg/logo-light.png"></router-link>
               </div>
             </div>
             <div class="col-lg-11 col-md-12 text-right text-left-xs text-left-sm">
