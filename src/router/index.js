@@ -4,7 +4,7 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import Dashboard from '@/components/Dashboard'
 import Logout from '@/components/Logout'
-
+import CreateCar from '@/components/CreateCar'
 Vue.use(Router)
 
 export default new Router({
@@ -28,6 +28,11 @@ export default new Router({
       path: '/logout',
       name: 'Logout',
       component: Logout
+    },
+    {
+      path: '/car/new',
+      name: 'CreateCar',
+      component: CreateCar
     }
   ]
 })

@@ -24,10 +24,10 @@
             <div class="col-lg-11 col-md-12 text-right text-left-xs text-left-sm">
               <div class="bar__module">
                 <ul class="menu-horizontal text-left">
-                  <li> <a href="#">Pealeht</a>
+                  <li> <router-link to="/dashboard">Pealeht</router-link>
                   </li>
                   <li>
-                    <a href="#">Ajajoon</a>
+                    <router-link to="/dashboard">Ajajoon</router-link>
                   </li>
                   <li class="dropdown">
                     <span class="dropdown__trigger">{{currentUser.email}}</span>
