@@ -19,15 +19,25 @@
 <script>
 export default {
   name: 'dashboards',
-    mounted () {
-    this.populateCarMake()
+  mounted () {
+    this.getUserVehicles()
   },
   props: [],
   data () {
     return {}
   },
   methods: {
-
+    getUserVehicles () {
+      this.$http.get('/api/car', {
+        name: this.firstname,
+        year: this.lastname,
+        variant: this.email,
+        description: this.password,
+        makeId: this.make_selected,
+        modelId: this.model_selected
+      }).then(request => this.registerSuccessful(request))
+        .catch(request => this.registerFailed(request))
+    }
   }
 }
 </script>

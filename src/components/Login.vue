@@ -50,7 +50,7 @@
                               <input v-model="email" type="email" id="inputEmail" class="form-control" placeholder="E-posti aadress" required autofocus>
                               <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Salasõna" required autofocus>
                               <button class="btn btn--primary type--uppercase" type="submit">Sisene</button>
-                            </form> <span class="type--fine-print block">Pole veel kasutajat? <a href="#">Loo omale uus konto</a></span> </div>
+                            </form> <span class="type--fine-print block">Pole veel kasutajat? <router-link to="/register" class="">Loo omale uus konto</router-link></span> </div>
                     </div>
                 </div>
             </section>

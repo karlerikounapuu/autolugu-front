@@ -6,7 +6,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-3 col-md-2">
-                        <a href="index.html"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/img/logo-light.png"> </a>
+                        <a href="index.html"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </a>
                     </div>
                     <div class="col-9 col-md-10 text-right">
                         <a href="#" class="hamburger-toggle" data-toggle-class="#menu1;hidden-xs hidden-sm"> <i class="icon icon--sm stack-interface stack-menu"></i> </a>
@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-lg-1 col-md-2 hidden-xs">
                         <div class="bar__module">
-                            <a href="index.html"> <img class="logo logo-dark" alt="logo" src="static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="static/img/logo-light.png"> </a>
+                            <a href="index.html"> <img class="logo logo-dark" alt="logo" src="/static/img/logo-dark.png"> <img class="logo logo-light" alt="logo" src="/static/img/logo-light.png"> </a>
                         </div>
                     </div>
                     <div class="col-lg-12 col-md-10 text-right text-left-xs text-left-sm">
@@ -40,7 +40,7 @@
 <div class="main-container">
     <section class="space--xs imageblock switchable feature-large">
         <div class="imageblock__content col-lg-5 col-md-4 pos-right">
-            <div class="background-image-holder"><img src="static/img/inner-3.jpg"></div>
+            <div class="background-image-holder"><img src="/static/img/inner-3.jpg"></div>
         </div>
         <div class="container">
             <div class="row">
@@ -87,7 +87,8 @@ export default {
       lastname: '',
       email: '',
       password: '',
-      error: false
+      error: '',
+      errors: []
     }
   },
   computed: {
@@ -106,28 +107,47 @@ export default {
       }
     },
     register () {
-      this.$http.post('/account/register', { firstname: this.firstname, lastname: this.lastname, email: this.email, password: this.password })
-        .then(request => this.registerSuccessful(request))
-        .catch(request => this.registerFailed(request))
+      this.$http.post('/account/register', {
+        firstname: this.firstname,
+        lastname: this.lastname,
+        email: this.email,
+        password: this.password
+      })
+        .then((response) => this.registerSuccessful(response))
+        .catch((error) => this.registerFailed(error))
     },
-    registerSuccessful (req) {
-      if (req.status !== 201) {
-        this.registerFailed(req)
+    registerSuccessful (res) {
+      console.log('Register successful triggered')
+      if (res.status !== 201) {
+        this.registerFailed(res)
         return
       }
-      //  this.error = 'Konto edukalt loodud!'
-      console.log(req.data)
-      //  localStorage.token = req.data
-      //  this.$store.dispatch('login')
       this.$toasted.show('Konto edukalt loodud. Saate nüüd sisse logida.').goAway(3000)
       this.$router.push({ path: '/' })
     },
-    registerFailed (req) {
-      this.error = 'Registreerimine luhtus: ' + req
-      this.$toasted.show('Viga uue konto registreerimisel').goAway(3000)
-      console.log(req)
-      this.$store.dispatch('logout')
-      delete localStorage.token
+    registerFailed (res) {
+      console.log(res.response.data)
+      if (res.response.data) {
+        if (res.response.data.errors) {
+          var vm = this
+          vm.errors = []
+          res.response.data.errors.forEach(function(err) {
+            // console.log(err.description)
+            vm.errors.push(err['description'])
+            // Vue.toasted.show(err.description);
+          })
+        } else {
+          for (var k in res.response.data) {
+            this.$toasted.show('Viga atribuudil ' + k + ': ' + res.response.data[k][0]).goAway(5000)
+          }
+        }
+      }
+      console.log(this.errors)
+      var vm = this
+      this.errors.forEach(function(err) {
+        vm.$toasted.show(err).goAway(5000)
+      })
+      this.error = "Kasutaja registreerimine ebaõnnestus."
     }
   }
 }
