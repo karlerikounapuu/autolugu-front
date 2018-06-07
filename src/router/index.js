@@ -5,6 +5,8 @@ import Register from '@/components/Register'
 import Dashboard from '@/components/Dashboard'
 import Logout from '@/components/Logout'
 import CreateCar from '@/components/CreateCar'
+import Car from '@/components/Car'
+import PageNotFound from '@/components/PageNotFound'
 Vue.use(Router)
 
 export default new Router({
@@ -33,6 +35,12 @@ export default new Router({
       path: '/car/new',
       name: 'CreateCar',
       component: CreateCar
-    }
+    },
+    {
+      path: '/car/:id',
+      name: 'Car',
+      component: Car
+    },
+    { path: "*", component: PageNotFound }
   ]
 })

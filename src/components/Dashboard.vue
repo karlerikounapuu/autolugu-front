@@ -4,7 +4,7 @@
               <div class="container">
                   <div class="row">
                     <h2 class="section-title">Sinu sõidukid ({{ cars.length }})</h2>
-                  <span class="" style=""><router-link to="/car/new" class="btn__text" style="font-weight: bold; text-decoration: none;">Lisa uus</router-link></span>
+                  <span class="" style=""><router-link to="/car/new" class="btn__text" style="margin-left: 10px; font-weight: bold; text-decoration: none;">Lisa uus</router-link></span>
 </div>
                     <div class="masonry">
                         <div class="masonry__container row masonry--active">
@@ -19,7 +19,7 @@
                                     </div>
                                     <div class="card__bottom text-center">
                                         <div class="card__action"> <span class="h6 type--uppercase">Muuda</span>
-                                            <a href="#"> <i class="icon icon--lg iconsmind icon-Gear"></i> </a>
+                                          <router-link class="product-image" :to="{ name: 'Car', params: { id: car.id }}"><i class="icon icon--lg iconsmind icon-Gear"></i></router-link>
                                         </div>
                                         <div class="card__action"> <span class="h6 type--uppercase">Vaata</span>
                                             <a href="#"> <i class="icon icon--lg iconsmind icon-Car-3"></i> </a>
@@ -84,7 +84,7 @@ export default {
         // console.log(vehicle)
         // vm.$toasted.show(vehicle.car.name).goAway(3000)
       })
-      this.$toasted.show('Vehicles retrieved')
+      // this.$toasted.show('Vehicles retrieved')
     },
     resFailed (res) {
       this.$toasted.show('Cant retrieve vehicles').goAway(3000)
@@ -95,6 +95,7 @@ export default {
       console.log(res.data)
       console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
       this.cars.push({
+        'id': res.data.id,
         'name': res.data.name,
         'make': res.data.make.name,
         'model': res.data.model.name
@@ -109,18 +110,4 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-font-weight: normal;
-}
-ul {
-list-style-type: none;
-padding: 0;
-}
-li {
-display: inline-block;
-margin: 0 10px;
-}
-a {
-color: #42b983;
-}
 </style>
