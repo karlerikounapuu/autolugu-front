@@ -9,9 +9,12 @@ import axios from './backend/vue-axios'
 import store from './store'
 import toasts from './alerts/toast'
 
-Vue.config.productionTip = false
+import vmodal from 'vue-js-modal'
 
+Vue.config.productionTip = false
+Vue.use(vmodal, { dialog: true })
 /* eslint-disable */
+// eslint-disable-next-line
 new Vue({
   el: '#app',
   router,

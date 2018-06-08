@@ -1,5 +1,7 @@
 <template>
 <div class="main-container">
+      <v-dialog/>
+      <new-property/>
             <section class="space--xxs" style="padding-bottom: 0;">
                 <div class="container">
                     <div class="row">
@@ -13,8 +15,8 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-3">
-                            <a href="#" class="block">
-                                <div @click="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa uus parameeter</p> </span> </div>
+                            <a class="block" href="#">
+                                <div @click="show()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa uus parameeter</p> </span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
@@ -35,7 +37,6 @@
                     </div>
                 </div>
             </section>
-            
             <section class="space--xxs" style="padding-top: 0;">
                 <div class="container">
                     <div class="row">
@@ -75,8 +76,8 @@
                         </div>
                     </div>
                 </div>
-            </section> 
-            <section class="space--xxs" style="padding-top: 0;">
+            </section>
+            <section class="space--xxs" style="padding-top: 0; padding-bottom: 0;">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
@@ -103,8 +104,8 @@
       <td>{{ property.category }}</td>
       <td>{{ property.name }}</td>
       <td>{{ property.description}}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -173,6 +174,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import NewProperty from '@/components/modals/new-property'
 export default {
 
   name: 'car',
@@ -191,7 +193,12 @@ export default {
       activities: []
     }
   },
+  components: {NewProperty},
   methods: {
+  show () {
+    console.log('triggered')
+    this.$modal.show('new-property')
+  },
     kys () {
       this.$toasted.show('Idi nahui bljat').goAway(3000)
     },
@@ -248,7 +255,7 @@ export default {
     fetchCarFailed (res) {
       //  this.$router.push('/404')
       console.log('Fetching error.' + res)
-      this.$toasted.show('Can not fetch car')
+      this.$toasted.show('Can not fetch car').goAway(3000)
     }
   }
 }
@@ -257,5 +264,5 @@ export default {
 <style scoped>
 a.can-i-have-some-sleep-please:link, a.can-i-have-some-sleep-please:visited, a.can-i-have-some-sleep-please:hover, a.can-i-have-some-sleep-please:active  {
   text-decoration: none;
-} 
+}
 </style>
