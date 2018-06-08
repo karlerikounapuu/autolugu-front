@@ -100,6 +100,7 @@
     </tr>
   </thead>
   <tbody>
+    <!-- eslint-disable-next-line -->
     <tr v-for="property in properties">
       <td>{{ property.category }}</td>
       <td>{{ property.name }}</td>
@@ -195,10 +196,10 @@ export default {
   },
   components: {NewProperty},
   methods: {
-  show () {
-    console.log('triggered')
-    this.$modal.show('new-property')
-  },
+    show () {
+      console.log('triggered')
+      this.$modal.show('new-property')
+    },
     kys () {
       this.$toasted.show('Idi nahui bljat').goAway(3000)
     },

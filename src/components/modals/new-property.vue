@@ -34,10 +34,9 @@
 import { mapGetters } from 'vuex'
 import Vue from 'vue'
 export default {
-  name: "new-property",
+  name: 'new-property',
   data () {
     return {
-      // prop_category_selected: this.prop_category.text,
       prop_category: '',
       prop_name: '',
       prop_description: ''
@@ -50,38 +49,35 @@ export default {
     ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
-  newProperty () {
-    if(this.prop_category && this.prop_name) {
-      console.log('Fields good')
-      this.$http.post('/api/carproperty', {
-        carId: this.$route.params.id,
-        value: this.prop_category,
-        propertytype: {
-          name: this.prop_name,
-          description: this.prop_description
-        }
-      }).then(res => this.propertySuccessful(res))
-        .catch(res => this.propertyFailed(res))
-    } else {
-      Vue.toasted.show('Palun täitke kõik väljad!').goAway(3000)
+    newProperty () {
+      if (this.prop_category && this.prop_name) {
+        console.log('Fields good')
+        this.$http.post('/api/carproperty', {
+          carId: this.$route.params.id,
+          value: this.prop_category,
+          propertytype: {
+            name: this.prop_name,
+            description: this.prop_description
+          }
+        }).then(res => this.propertySuccessful(res))
+          .catch(res => this.propertyFailed(res))
+      } else {
+        Vue.toasted.show('Palun täitke kõik väljad!').goAway(3000)
+      }
+    },
+    propertySuccessful (res) {
+      if (res.status !== 200) {
+        console.log('Response status is ' + res.status)
+        this.propertyFailed(res)
+        return
+      }
+      this.$modal.hide('new-property')
+      Vue.toasted.show('Objekt edukalt lisatud!').goAway(3000)
+    },
+    propertyFailed (res) {
+      this.$modal.hide('new-property')
+      Vue.toasted.show('Parameetri lisamine ebaõnnestus').goAway(3000)
     }
-  },
-  propertySuccessful (res) {
-    if (res.status !== 200) {
-      console.log('Response status is ' + res.status)
-      this.propertyFailed(res)
-      return
-    }
-    this.$modal.hide('new-property')
-    //this.Vue.toasted.show('Fuck off')
-    Vue.toasted.show('Objekt edukalt lisatud!').goAway(3000)
-    //Vue.$toast.show('New property added!')
-  },
-  propertyFailed (res) {
-    this.$modal.hide('new-property')
-    Vue.toasted.show('Parameetri lisamine ebaõnnestus').goAway(3000)
   }
-  }
-
 }
 </script>
