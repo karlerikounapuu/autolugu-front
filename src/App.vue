@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <template v-if="currentUser">
+    <template v-if="currentUser && this.$router.currentRoute.fullPath != '/404'">
       <Navbar></Navbar>
     </template>
     <div class="container-fluid">
       <router-view></router-view>
-      <template v-if="currentUser">
+      <template v-if="currentUser && this.$router.currentRoute.fullPath != '/404'">
         <Foot></Foot>
       </template>
     </div>
@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     checkCurrentLogin () {
+      console.log(this.$router.currentRoute)
       if (!this.currentUser && this.$route.path !== '/register' && this.$route.path !== '/') {
         this.$router.push('/?redirect=' + this.$route.path)
       } else {

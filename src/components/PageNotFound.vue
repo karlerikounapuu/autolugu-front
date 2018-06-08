@@ -23,6 +23,9 @@ export default {
     return {
     }
   },
+  created: function () {
+    this.$router.push('/404')
+  },
   methods: {}
 }
 </script>

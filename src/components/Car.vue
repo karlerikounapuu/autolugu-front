@@ -256,6 +256,7 @@ export default {
     fetchCarFailed (res) {
       //  this.$router.push('/404')
       console.log('Fetching error.' + res)
+      this.$router.push('/404')
       this.$toasted.show('Can not fetch car').goAway(3000)
     }
   }
