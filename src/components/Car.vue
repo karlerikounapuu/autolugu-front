@@ -1,7 +1,7 @@
 <template>
 <div class="main-container">
       <v-dialog/>
-      <new-property/>
+      <new-extra/>
       <new-activity/>
       <new-access/>
             <section class="space--xxs" style="padding-bottom: 0;">
@@ -18,12 +18,12 @@
                     <div class="row">
                         <div class="col-md-3">
                             <a class="block" href="#">
-                                <div @click="propertyModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa uus parameeter</p> </span> </div>
+                                <div @click="extraModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa varustus</p> </span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus&nbsp;</p></span> </div>
+                                <div @click="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus</p></span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
@@ -90,7 +90,7 @@
             </section>
             <section class="space--xxs" style="padding-top: 0; padding-bottom: 0;">
               <div class="container">
-                <table v-if="properties.length" class="table">
+                <table v-if="extras.length" class="table">
   <thead class="thead-dark">
     <tr>
       <!-- <th scope="col">#</th> -->
@@ -103,10 +103,10 @@
   </thead>
   <tbody>
     <!-- eslint-disable-next-line -->
-    <tr v-for="property in properties">
-      <td>{{ property.category }}</td>
-      <td>{{ property.name }}</td>
-      <td>{{ property.description}}</td>
+    <tr v-for="extra in extras">
+      <td>{{ extra.category }}</td>
+      <td>{{ extra.name }}</td>
+      <td>{{ extra.description}}</td>
       <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
       <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
@@ -205,7 +205,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import NewProperty from '@/components/modals/new-property'
+import NewExtra from '@/components/modals/new-extra'
 import NewActivity from '@/components/modals/new-activity'
 import NewAccess from '@/components/modals/new-access'
 export default {
@@ -216,35 +216,86 @@ export default {
   },
   mounted () {
     this.getVehicle()
-    this.getVehicleProperties()
     this.getVehicleActivities()
-    this.getAccessList()
+    // this.getVehicleExtras()
+    // this.getVehicleActivities()
+    // this.getAccessList()
   },
   props: [],
   data () {
     return {
       car: {},
+      extras: [],
       properties: [],
       activities: [],
       grandtheftauto: []
     }
   },
-  components: {NewProperty, NewActivity, NewAccess},
+  components: {NewExtra, NewActivity, NewAccess},
   methods: {
-    propertyModal () {
-      console.log('triggered property modal')
-      this.$modal.show('new-property')
+    getVehicle () {
+      this.$http.get('/api/car/' + this.$route.params.id, {})
+        .then(res => this.fetchVehicle(res))
+        .catch(res => this.fetchVehicleFailed(res))
     },
-    activityModal () {
-      console.log('triggered activity modal')
-      this.$modal.show('new-activity')
+    fetchVehicle (res) {
+      if (res.status !== 200) {
+        this.fetchVehicleFailed(res)
+      }
+      var vm = this
+      vm.car = {
+        'name': res.data.name,
+        'make': res.data.make.name,
+        'model': res.data.model.name,
+        'variant': res.data.variant,
+        'year': res.data.year,
+        'description': res.data.description
+      }
+
+      res.data.extras.forEach(function (extra) {
+        vm.extras.push({
+          id: extra.carExtraId,
+          name: extra.name,
+          description: extra.description,
+          category: extra.category
+        })
+      })
+
+      console.log('Found total of ' + vm.extras.length + ' extras')
     },
-    accessModal () {
-      console.log('triggered access modal')
-      this.$modal.show('new-access')
+    fetchVehicleFailed (res) {
+      console.log('Fetching error.' + res)
+      //this.$router.push('/404')
+      this.$toasted.show('Can not fetch car').goAway(3000)
     },
-    kys () {
-      this.$toasted.show('Idi nahui bljat').goAway(3000)
+    getVehicleActivities () {
+      console.log('Fetching vehicle activities')
+      this.$http.get('/api/caractivity/' + this.$route.params.id, {})
+        .then(res => this.fetchActivity(res))
+        .catch(res => this.fetchActivityFailed(res))
+    },
+    fetchActivity (res) {
+      if (res.status !== 200) {
+        this.fetchActivityFailed(res)
+      }
+      var vm = this
+      vm.activities = []
+      res.data.forEach(function (activity) {
+        // console.log('Found activity ' + activity.name)
+        vm.activities.push({
+          'id': activity.activityId,
+          'date': activity.from,
+          'description': activity.content,
+          'type': activity.activityType
+        })
+      })
+      //  console.log(res.data)
+      // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
+    },
+    fetchActivityFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Can not fetch activities')
     },
     getAccessList () {
       this.$http.get('/api/caraccess/', {})
@@ -277,92 +328,20 @@ export default {
       console.log('Fetching error.' + res)
       this.$toasted.show('Ei õnnestu lugeda volitatud kasutajaid')
     },
-    getVehicle () {
-      this.$http.get('/api/car/' + this.$route.params.id, {})
-        .then(res => this.fetchCar(res))
-        .catch(res => this.fetchCarFailed(res))
+    extraModal () {
+      console.log('triggered extra modal')
+      this.$modal.show('new-extra')
     },
-    getVehicleProperties () {
-      console.log('Fetching vehicle properties')
-      this.$http.get('/api/carproperty/' + this.$route.params.id, {})
-        .then(res => this.fetchProperty(res))
-        .catch(res => this.fetchPropertyFailed(res))
+    activityModal () {
+      console.log('triggered activity modal')
+      this.$modal.show('new-activity')
     },
-    fetchProperty (res) {
-      if (res.status !== 200) {
-        this.fetchPropertyFailed(res)
-      }
-      var vm = this
-      vm.properties = []
-      res.data.forEach(function (prop) {
-        console.log('Found property ' + prop.property.name)
-        vm.properties.push({
-          'id': prop.property.id,
-          'name': prop.property.name,
-          'description': prop.property.description,
-          'category': prop.value
-        })
-      })
-      //  console.log(res.data)
-      // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
+    accessModal () {
+      console.log('triggered access modal')
+      this.$modal.show('new-access')
     },
-    fetchPropertyFailed (res) {
-      //  this.$router.push('/404')
-      console.log('Fetching error.' + res)
-      this.$toasted.show('Can not fetch properties')
-    },
-    getVehicleActivities () {
-      console.log('Fetching vehicle activities')
-      this.$http.get('/api/caractivity/' + this.$route.params.id, {})
-        .then(res => this.fetchActivity(res))
-        .catch(res => this.fetchActivityFailed(res))
-    },
-    fetchActivity (res) {
-      if (res.status !== 200) {
-        this.fetchActivityFailed(res)
-      }
-      var vm = this
-      vm.activities = []
-      res.data.forEach(function (activity) {
-        // console.log('Found activity ' + activity.name)
-        vm.activities.push({
-          'id': activity.activityId,
-          'date': activity.from,
-          'description': activity.content,
-          'type': activity.activityType
-        })
-      })
-      //  console.log(res.data)
-      // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
-    },
-    fetchActivityFailed (res) {
-      //  this.$router.push('/404')
-      console.log('Fetching error.' + res)
-      this.$toasted.show('Can not fetch activities')
-    },
-    fetchCar (res) {
-      if (res.status !== 200) {
-        this.fetchCarFailed(res)
-      }
-      var vm = this
-      vm.car = {}
-      //  console.log(res.status)
-      //  console.log(res.data)
-      console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
-      vm.car = {
-        'name': res.data.name,
-        'make': res.data.make.name,
-        'model': res.data.model.name,
-        'variant': res.data.variant,
-        'year': res.data.year,
-        'description': res.data.description
-      }
-    },
-    fetchCarFailed (res) {
-      //  this.$router.push('/404')
-      console.log('Fetching error.' + res)
-      this.$router.push('/404')
-      this.$toasted.show('Can not fetch car').goAway(3000)
+    kys () {
+      this.$toasted.show('Idi nahui bljat').goAway(3000)
     }
   }
 }

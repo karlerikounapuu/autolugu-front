@@ -1,14 +1,14 @@
 <template>
-<modal name="new-property">
+<modal name="new-extra">
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h4 style="padding-top: 5px;"><i class="icon--sm icon-Gears"></i>Lisa uus omadus</h4>
-                    <form @submit.prevent="newProperty">
+                    <h4 style="padding-top: 5px;"><i class="icon--sm icon-Gears"></i>Lisa uus varustus</h4>
+                    <form @submit.prevent="newExtra">
                         <div class="row">
                             <div class="col-12">
                             <div class="input-select">
-                                <select v-model="prop_category" required>
+                                <select v-model="extra_category" required>
                                     <option>Helisüsteem</option>
                                     <option>Interjöör</option>
                                     <option>Mugavusvarustus</option>
@@ -19,9 +19,9 @@
                                 </select>
                             </div>
                             </div>
-                            <div class="col-12"><input v-model="prop_name" type="text" class="validate" placeholder="Parameeter / Ese" required autofocus></div>
-                            <div class="col-12"><input v-model="prop_description" type="text" class="validate" placeholder="Vabatahtlik lühikirjeldus" required autofocus></div>
-                            <div class="col-12"><button class="btn btn--primary type--uppercase" type="submit">Lisa omadus</button></div>
+                            <div class="col-12"><input v-model="extra_name" type="text" class="validate" placeholder="Parameeter / Ese" required autofocus></div>
+                            <div class="col-12"><input v-model="extra_description" type="text" class="validate" placeholder="Vabatahtlik lühikirjeldus" required autofocus></div>
+                            <div class="col-12"><button class="btn btn--primary type--uppercase" type="submit">Lisa varustus</button></div>
                             <hr>
                         </div>
                     </form>
@@ -34,12 +34,12 @@
 import { mapGetters } from 'vuex'
 import Vue from 'vue'
 export default {
-  name: 'new-property',
+  name: 'new-extra',
   data () {
     return {
-      prop_category: '',
-      prop_name: '',
-      prop_description: ''
+      extra_category: '',
+      extra_name: '',
+      extra_description: ''
     }
   },
   mounted () {
@@ -49,33 +49,32 @@ export default {
     ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
-    newProperty () {
-      if (this.prop_category && this.prop_name) {
+    newExtra () {
+      if (this.extra_category && this.extra_name) {
         console.log('Fields good')
-        this.$http.post('/api/carproperty', {
+        this.$http.post('/api/carextras', {
           carId: this.$route.params.id,
-          value: this.prop_category,
-          propertytype: {
-            name: this.prop_name,
-            description: this.prop_description
-          }
-        }).then(res => this.propertySuccessful(res))
-          .catch(res => this.propertyFailed(res))
+          category: this.extra_category,
+          name: this.extra_name,
+          description: this.extra_description
+        })
+          .then(res => this.extraSuccessful(res))
+          .catch(res => this.extraFailed(res))
       } else {
         Vue.toasted.show('Palun täitke kõik väljad!').goAway(3000)
       }
     },
-    propertySuccessful (res) {
+    extraSuccessful (res) {
       if (res.status !== 200) {
         console.log('Response status is ' + res.status)
-        this.propertyFailed(res)
+        this.extraFailed(res)
         return
       }
-      this.$modal.hide('new-property')
+      this.$modal.hide('new-extra')
       Vue.toasted.show('Objekt edukalt lisatud!').goAway(3000)
     },
-    propertyFailed (res) {
-      this.$modal.hide('new-property')
+    extraFailed (res) {
+      this.$modal.hide('new-extra')
       Vue.toasted.show('Parameetri lisamine ebaõnnestus').goAway(3000)
     }
   }
