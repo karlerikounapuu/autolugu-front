@@ -2,6 +2,7 @@
 <div class="main-container">
       <v-dialog/>
       <new-property/>
+      <new-activity/>
             <section class="space--xxs" style="padding-bottom: 0;">
                 <div class="container">
                     <div class="row">
@@ -16,12 +17,12 @@
                     <div class="row">
                         <div class="col-md-3">
                             <a class="block" href="#">
-                                <div @click="show()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa uus parameeter</p> </span> </div>
+                                <div @click="propertyModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa uus parameeter</p> </span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus&nbsp;</p></span> </div>
+                                <div @click="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus&nbsp;</p></span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
@@ -127,30 +128,22 @@
                 <table v-if="activities.length" class="table">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <!-- <th scope="col">#</th> -->
+      <th scope="col">Kuupäev</th>
+      <th scope="col">Tegevus</th>
+      <th scope="col">Kirjeldus</th>
+      <th scope="col">Toimingud</th>
+      <!-- <th scope="col">Handle</th> -->
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
+    <!-- eslint-disable-next-line -->
+    <tr v-for="activity in activities">
+      <td>{{ activity.date }}</td>
+      <td>{{ activity.type }}</td>
+      <td>{{ activity.description}}</td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -176,6 +169,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import NewProperty from '@/components/modals/new-property'
+import NewActivity from '@/components/modals/new-activity'
 export default {
 
   name: 'car',
@@ -185,6 +179,7 @@ export default {
   mounted () {
     this.getVehicle()
     this.getVehicleProperties()
+    this.getVehicleActivities()
   },
   props: [],
   data () {
@@ -194,11 +189,15 @@ export default {
       activities: []
     }
   },
-  components: {NewProperty},
+  components: {NewProperty, NewActivity},
   methods: {
-    show () {
-      console.log('triggered')
+    propertyModal () {
+      console.log('triggered property')
       this.$modal.show('new-property')
+    },
+    activityModal () {
+      console.log('triggered activity')
+      this.$modal.show('new-activity')
     },
     kys () {
       this.$toasted.show('Idi nahui bljat').goAway(3000)
@@ -235,6 +234,34 @@ export default {
       //  this.$router.push('/404')
       console.log('Fetching error.' + res)
       this.$toasted.show('Can not fetch properties')
+    },
+    getVehicleActivities () {
+      console.log('Fetching vehicle activities')
+      this.$http.get('/api/caractivity/' + this.$route.params.id, {})
+        .then(res => this.fetchActivity(res))
+        .catch(res => this.fetchActivityFailed(res))
+    },
+    fetchActivity (res) {
+      if (res.status !== 200) {
+        this.fetchActivityFailed(res)
+      }
+      var vm = this
+      res.data.forEach(function (activity) {
+        // console.log('Found activity ' + activity.name)
+        vm.activities.push({
+          'id': activity.activityId,
+          'date': activity.from,
+          'description': activity.activityDescription,
+          'type': activity.activityType
+        })
+      })
+      //  console.log(res.data)
+      // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
+    },
+    fetchActivityFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Can not fetch activities')
     },
     fetchCar (res) {
       if (res.status !== 200) {
