@@ -41,6 +41,9 @@ export default new Router({
       name: 'Car',
       component: Car
     },
-    { path: "*", component: PageNotFound }
+    {
+      path: '*',
+      component: PageNotFound
+    }
   ]
 })

@@ -8,7 +8,7 @@
 </div>
                     <div class="masonry">
                         <div class="masonry__container row masonry--active">
-                            <div v-for="car in cars" class="col-md-4 masonry__item">
+                            <div v-for="car in cars" v-bind:key="car.id" class="col-md-4 masonry__item">
                                 <div class="card card-2 text-center">
                                     <div class="card__top">
                                         <a href="#"> <img alt="Image" src="http://www.evanpaulmotorcars.com/front_path/images/cars/placeholder-car.png"> </a>
@@ -31,7 +31,7 @@
                     </div>
                   </div>
             </section>
-  <section v-else="cars.length" class="text-center">
+  <section v-if="!cars.length" class="text-center">
     <div class="container">
       <div class="row">
         <div class="col-md-8 col-lg-6">
