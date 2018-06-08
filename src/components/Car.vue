@@ -3,6 +3,7 @@
       <v-dialog/>
       <new-property/>
       <new-activity/>
+      <new-access/>
             <section class="space--xxs" style="padding-bottom: 0;">
                 <div class="container">
                     <div class="row">
@@ -27,7 +28,7 @@
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Checked-User"></i> <span class="h5 color--primary"><p>Anna kasutajale ligipääs<br></p></span> </div>
+                                <div @click="accessModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Checked-User"></i> <span class="h5 color--primary"><p>Anna kasutajale ligipääs<br></p></span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
@@ -164,12 +165,49 @@
               <p>{{car.description}}</p>
             </div>
           </div>
+            <section class="space--xxs" style="padding-bottom: 0;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Volitatud kasutajad<br></h3>
+                        </div>
+                    </div>
+                </div>
+              </section>
+            <section class="space--xxs" style="padding-top: 0; padding-bottom: 0;">
+              <div class="container">
+                <table v-if="grandtheftauto.length" class="table">
+  <thead class="thead-dark">
+    <tr>
+      <!-- <th scope="col">#</th> -->
+      <th scope="col">Alates</th>
+      <th scope="col">Kuni</th>
+      <th scope="col">Volitatud kasutaja</th>
+      <th scope="col">Toimingud</th>
+      <!-- <th scope="col">Handle</th> -->
+    </tr>
+  </thead>
+  <tbody>
+    <!-- eslint-disable-next-line -->
+    <tr v-for="access in grandtheftauto">
+      <td>{{ access.from }}</td>
+      <td>{{ access.to }}</td>
+      <td>{{ access.userId }}</td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+    </tr>
+  </tbody>
+</table>
+<p v-else>Te ei ole ühelegi teisele kasutajale muutmisõiguseid andnud.</p>
+</div>
+            </section>
         </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import NewProperty from '@/components/modals/new-property'
 import NewActivity from '@/components/modals/new-activity'
+import NewAccess from '@/components/modals/new-access'
 export default {
 
   name: 'car',
@@ -180,27 +218,64 @@ export default {
     this.getVehicle()
     this.getVehicleProperties()
     this.getVehicleActivities()
+    this.getAccessList()
   },
   props: [],
   data () {
     return {
       car: {},
       properties: [],
-      activities: []
+      activities: [],
+      grandtheftauto: []
     }
   },
-  components: {NewProperty, NewActivity},
+  components: {NewProperty, NewActivity, NewAccess},
   methods: {
     propertyModal () {
-      console.log('triggered property')
+      console.log('triggered property modal')
       this.$modal.show('new-property')
     },
     activityModal () {
-      console.log('triggered activity')
+      console.log('triggered activity modal')
       this.$modal.show('new-activity')
+    },
+    accessModal () {
+      console.log('triggered access modal')
+      this.$modal.show('new-access')
     },
     kys () {
       this.$toasted.show('Idi nahui bljat').goAway(3000)
+    },
+    getAccessList () {
+      this.$http.get('/api/caraccess/', {})
+        .then(res => this.fetchAccess(res))
+        .catch(res => this.fetchAccessFailed(res))
+    },
+    fetchAccess (res) {
+      if (res.status !== 200) {
+        this.fetchPropertyFailed(res)
+      }
+      var vm = this
+      vm.grandtheftauto = []
+      res.data.forEach(function (access) {
+        // console.log('Found property ' + prop.property.name)
+        if(access.car.id == vm.$route.params.id && access.userId != vm.currentUser.UserId) {
+        vm.grandtheftauto.push({
+          'id': access.accessId,
+          'userid': access.userId,
+          'from': access.from,
+          'to': access.to
+        })
+        }
+      })
+      console.log('Discovered ' + vm.grandtheftauto.length + ' accesses to car')
+      //  console.log(res.data)
+      // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
+    },
+    fetchAccessFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Ei õnnestu lugeda volitatud kasutajaid')
     },
     getVehicle () {
       this.$http.get('/api/car/' + this.$route.params.id, {})
@@ -218,6 +293,7 @@ export default {
         this.fetchPropertyFailed(res)
       }
       var vm = this
+      vm.properties = []
       res.data.forEach(function (prop) {
         console.log('Found property ' + prop.property.name)
         vm.properties.push({
@@ -246,12 +322,13 @@ export default {
         this.fetchActivityFailed(res)
       }
       var vm = this
+      vm.activities = []
       res.data.forEach(function (activity) {
         // console.log('Found activity ' + activity.name)
         vm.activities.push({
           'id': activity.activityId,
           'date': activity.from,
-          'description': activity.activityDescription,
+          'description': activity.content,
           'type': activity.activityType
         })
       })
@@ -268,6 +345,7 @@ export default {
         this.fetchCarFailed(res)
       }
       var vm = this
+      vm.car = {}
       //  console.log(res.status)
       //  console.log(res.data)
       console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
