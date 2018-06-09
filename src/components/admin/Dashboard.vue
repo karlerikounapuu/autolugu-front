@@ -11,32 +11,6 @@
                     </div>
                 </div>
             </section>
-            <section class="text-center space--xxs" style="padding-top: 0px;">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <a class="block" href="#">
-                                <div @click.prevent="passwordEditModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Key"></i> <span class="h5 color--primary"><p>Muuda kasutaja parool</p> </span> </div>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="#" class="block">
-                                <div @click.prevent="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus</p></span> </div>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="#" class="block">
-                                <div @click.prevent="accessModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Checked-User"></i> <span class="h5 color--primary"><p>Anna kasutajale ligipääs<br></p></span> </div>
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <router-link :to="'/car/overview/' + this.$route.params.id" class="block">
-                                <div class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Eye"></i> <span class="h5 color--primary"><p>Vaata kogu informatsiooni</p></span> </div>
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-            </section>
             <section class="space--xxs" style="padding-top: 0;">
                 <div class="container">
                     <div class="row">
@@ -106,6 +80,18 @@
 <p v-else>Ühtegi kasutajakontot pole süsteemi lisatud.</p>
 </div>
 </section>
+            <section class="text-center space--xxs" style="padding-top: 0px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a class="block" href="#">
+                                <div @click.prevent="passwordEditModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Key"></i> <span class="h5 color--primary"><p>Muuda kasutaja parool</p> </span> </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
 </div>
 </template>
 <script>

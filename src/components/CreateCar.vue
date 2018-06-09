@@ -81,7 +81,7 @@ export default {
           response.data.forEach((obj) => {
             this.options_carmake.push({text: obj.name, value: obj.makeId})
           })
-          this.$toasted.show('Populated car makes').goAway(3000)
+          // this.$toasted.show('Populated car makes').goAway(3000)
         })
     },
     populateCarModels () {
@@ -89,7 +89,7 @@ export default {
       if (this.options_carmodel.length) {
         this.options_carmodel = []
       }
-      this.$toasted.show('Populating car models').goAway(3000)
+      // this.$toasted.show('Populating car models').goAway(3000)
       this.$http.get('/api/carmake/' + this.make_selected)
         .then((response) => {
           // console.log(response)
@@ -97,7 +97,7 @@ export default {
             // this.$toasted.show('Found something!').goAway(3000)
             this.options_carmodel.push({text: obj.name, value: obj.modelId})
           })
-          this.$toasted.show('Car models populated!').goAway(3000)
+          // this.$toasted.show('Car models populated!').goAway(3000)
         })
     },
     checkCurrentLogin () {

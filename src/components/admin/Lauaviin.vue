@@ -45,7 +45,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import EditPassword from '@/components/admin/modals/edit-password'
 export default {
   name: 'UserLogs',
   computed: {

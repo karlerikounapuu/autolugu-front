@@ -411,6 +411,7 @@ export default {
       vm.grandtheftauto = []
       res.data.forEach(function (access) {
         // console.log('Found property ' + prop.property.name)
+        // eslint-disable-next-line
         if (access.userId != vm.currentUser.UserId) {
           vm.grandtheftauto.push({
             'id': access.accessId,
