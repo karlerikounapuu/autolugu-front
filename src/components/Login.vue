@@ -93,7 +93,7 @@ export default {
   methods: {
     checkCurrentLogin () {
       if (this.currentUser) {
-        this.$router.replace(this.$route.query.redirect || '/dashboard')
+        this.$router.push(this.$route.query.redirect || '/dashboard')
       }
     },
     login () {
@@ -111,7 +111,7 @@ export default {
       localStorage.token = req.data
       this.$store.dispatch('login')
       this.$toasted.show('Edukalt sisselogitud!').goAway(3000)
-      this.$router.replace(this.$route.query.redirect || '/dashboard')
+      this.$router.push(this.$route.query.redirect || '/dashboard')
     },
     loginFailed () {
       this.error = 'Vale e-posti aadress või parool!'

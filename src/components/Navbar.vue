@@ -37,6 +37,9 @@
                           <div class="dropdown__content col-lg-2">
                             <ul class="menu-vertical">
                               <li>
+                                <router-link to="/me" class="">Profiil</router-link>
+                              </li>
+                              <li>
                                 <router-link to="/logout" class="">Logi välja</router-link>
                               </li>
                             </ul>

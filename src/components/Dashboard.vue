@@ -22,7 +22,7 @@
                                           <router-link class="product-image" :to="{ name: 'Car', params: { id: car.id }}"><i class="icon icon--lg iconsmind icon-Gear"></i></router-link>
                                         </div>
                                         <div class="card__action"> <span class="h6 type--uppercase">Vaata</span>
-                                            <a href="#"> <i class="icon icon--lg iconsmind icon-Car-3"></i> </a>
+                                          <router-link class="product-image" :to="'/car/overview' + car.id"><i class="icon icon--lg iconsmind icon-Car-3"></i></router-link>
                                         </div>
                                     </div>
                                 </div>

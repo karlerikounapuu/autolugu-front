@@ -13,8 +13,8 @@
                                 </select>
                             </div>
                             </div>
-                            <div class="col-12"><input v-model="description" type="text" class="validate" placeholder="Tegevuse sisu / kirjeldus" required autofocus></div>
-                            <div class="col-12"><input v-model="date" type="text" class="validate" placeholder="Tegevuse aeg" autofocus></div>
+                            <div class="col-12"><input v-model='description' type="text" class="validate" placeholder="Tegevuse sisu / kirjeldus" required autofocus></div>
+                            <div class="col-12"><input v-model='date' type="text" class="validate" placeholder="Tegevuse aeg" autofocus></div>
                             <div class="col-12"><button class="btn btn--primary type--uppercase" type="submit">Muuda tegevus</button></div>
                             <hr>
                         </div>
@@ -84,14 +84,13 @@ export default {
       Vue.toasted.show('Parameetri lisamine ebaõnnestus').goAway(3000)
     },
     editActivity () {
-      console.log('Activity type is ' + this.activitytype)
+      console.log('Activity type is ' + this.activitytype + ' and description ' + this.description)
       if (this.activitytype && this.description) {
         console.log('Fields good')
         this.$http.put('/api/caractivity/' + this.activity_id, {
-          carActivityId: this.activity_id,
-          car: {id: this.$route.params.id},
-          description: this.description,
-          date: this.date,
+          ActivityId: this.activity_id,
+          Content: this.description,
+          From: this.date,
           typeId: this.activitytype
         }).then(res => this.activitySuccessful(res))
           .catch(res => this.activityFailed(res))
@@ -105,6 +104,7 @@ export default {
         this.propertyFailed(res)
         return
       }
+      console.log(res.status)
       this.$modal.hide('edit-activity')
       Vue.toasted.show('Tegevus edukalt muudetud!').goAway(3000)
     },

@@ -6,6 +6,8 @@ import Dashboard from '@/components/Dashboard'
 import Logout from '@/components/Logout'
 import CreateCar from '@/components/CreateCar'
 import Car from '@/components/Car'
+import CarOverview from '@/components/CarOverview'
+import Profile from '@/components/Profile'
 import PageNotFound from '@/components/PageNotFound'
 Vue.use(Router)
 
@@ -40,6 +42,16 @@ export default new Router({
       path: '/car/:id',
       name: 'Car',
       component: Car
+    },
+    {
+      path: '/car/overview/:id',
+      name: 'CarOverview',
+      component: CarOverview
+    },
+    {
+      path: '/me',
+      name: 'Profile',
+      component: Profile
     },
     {
       path: '*',

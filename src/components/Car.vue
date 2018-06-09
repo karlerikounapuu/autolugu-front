@@ -35,9 +35,9 @@
                             </a>
                         </div>
                         <div class="col-md-3">
-                            <a href="#" class="block">
-                                <div @click.prevent="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Eye"></i> <span class="h5 color--primary"><p>Vaata kogu informatsiooni</p></span> </div>
-                            </a>
+                            <router-link :to="'/car/overview/' + this.$route.params.id" class="block">
+                                <div class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Eye"></i> <span class="h5 color--primary"><p>Vaata kogu informatsiooni</p></span> </div>
+                            </router-link>
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
     <tr v-for="activity in activities">
       <td>{{ activity.date }}</td>
       <td>{{ activity.type }}</td>
-      <td>{{ activity.description}} {{activity.id}}</td>
+      <td>{{ activity.description}}</td>
       <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="activityEditModal(activity)" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
       <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showActivityAlert(activity.type, activity.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
@@ -411,7 +411,7 @@ export default {
       vm.grandtheftauto = []
       res.data.forEach(function (access) {
         // console.log('Found property ' + prop.property.name)
-        if (access.UserId != vm.currentUser.UserId) {
+        if (access.userId != vm.currentUser.UserId) {
           vm.grandtheftauto.push({
             'id': access.accessId,
             'userid': access.userId,
