@@ -57,7 +57,7 @@ export default {
     accessSuccessful (res) {
       if (res.status !== 200) {
         console.log('Response status is ' + res.status)
-        this.propertyFailed(res)
+        this.accessFailed(res)
         return
       }
       this.$modal.hide('new-access')

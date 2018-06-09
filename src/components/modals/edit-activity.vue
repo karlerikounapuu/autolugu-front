@@ -1,10 +1,10 @@
 <template>
-<modal name="new-activity">
+<modal name="edit-activity" @before-open="beforeOpen">
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h4 style="padding-top: 5px;"><i class="icon--sm icon-Repair"></i>Lisa uus tegevus</h4>
-                    <form @submit.prevent="newActivity">
+                    <h4 style="padding-top: 5px;"><i class="icon--sm icon-Repair"></i>Muuda tegevust</h4>
+                    <form @submit.prevent="editActivity">
                         <div class="row">
                             <div class="col-12">
                             <div class="input-select">
@@ -15,7 +15,7 @@
                             </div>
                             <div class="col-12"><input v-model="description" type="text" class="validate" placeholder="Tegevuse sisu / kirjeldus" required autofocus></div>
                             <div class="col-12"><input v-model="date" type="text" class="validate" placeholder="Tegevuse aeg" autofocus></div>
-                            <div class="col-12"><button class="btn btn--primary type--uppercase" type="submit">Lisa tegevus</button></div>
+                            <div class="col-12"><button class="btn btn--primary type--uppercase" type="submit">Muuda tegevus</button></div>
                             <hr>
                         </div>
                     </form>
@@ -28,24 +28,34 @@
 import { mapGetters } from 'vuex'
 import Vue from 'vue'
 export default {
-  name: 'new-activity',
+  name: 'edit-activity',
   data () {
     return {
       activitytype: '',
       description: '',
       date: '',
-      activities: []
+      activities: [],
+      activity_id: ''
     }
   },
   mounted () {
-    console.log('Car ID is ' + this.$route.params.id)
+    // console.log('Car ID is ' + this.$route.params.id)
     this.getActivityTypes()
-    console.log('scope is ' + this.$parent)
+    // console.log('scope is ' + this.$parent)
   },
   computed: {
     ...mapGetters({ currentUser: 'currentUser' })
   },
   methods: {
+    beforeOpen (event) {
+      this.activitytype = event.params.typeid
+      this.description = event.params.description
+      this.date = event.params.date
+      this.activity_id = event.params.id
+
+      console.log('Activity with ID ' + this.activity_id)
+      console.log('Car ID is ' + this.$route.params.id)
+    },
     getActivityTypes () {
       console.log('Attempting to fetch activity types')
       this.$http.get('/api/activitytypes', {})
@@ -70,16 +80,18 @@ export default {
     },
     fetchActivityFailed (res) {
       console.log('Fetch failed: ' + res)
-      this.$modal.hide('new-activity')
+      this.$modal.hide('edit-activity')
       Vue.toasted.show('Parameetri lisamine ebaõnnestus').goAway(3000)
     },
-    newActivity () {
+    editActivity () {
       console.log('Activity type is ' + this.activitytype)
       if (this.activitytype && this.description) {
         console.log('Fields good')
-        this.$http.post('/api/caractivity', {
-          carId: this.$route.params.id,
-          content: this.description,
+        this.$http.put('/api/caractivity/' + this.activity_id, {
+          carActivityId: this.activity_id,
+          car: {id: this.$route.params.id},
+          description: this.description,
+          date: this.date,
           typeId: this.activitytype
         }).then(res => this.activitySuccessful(res))
           .catch(res => this.activityFailed(res))
@@ -93,12 +105,12 @@ export default {
         this.propertyFailed(res)
         return
       }
-      this.$modal.hide('new-activity')
-      Vue.toasted.show('Tegevus edukalt lisatud!').goAway(3000)
+      this.$modal.hide('edit-activity')
+      Vue.toasted.show('Tegevus edukalt muudetud!').goAway(3000)
     },
     activityFailed (res) {
-      this.$modal.hide('new-activity')
-      Vue.toasted.show('Tegevuse lisamine ebaõnnestus').goAway(3000)
+      this.$modal.hide('edit-activity')
+      Vue.toasted.show('Tegevuse muutmine ebaõnnestus').goAway(3000)
     }
   }
 }

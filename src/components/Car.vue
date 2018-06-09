@@ -2,8 +2,11 @@
 <div class="main-container">
       <v-dialog/>
       <new-extra/>
+      <edit-extra/>
       <new-activity/>
+      <edit-activity/>
       <new-access/>
+      <edit-access/>
             <section class="space--xxs" style="padding-bottom: 0;">
                 <div class="container">
                     <div class="row">
@@ -105,9 +108,9 @@
     <!-- eslint-disable-next-line -->
     <tr v-for="extra in extras">
       <td>{{ extra.category }}</td>
-      <td>{{ extra.name }} ({{ extra.id }})</td>
+      <td>{{ extra.name }}</td>
       <td>{{ extra.description}}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="extraEditModal(extra)" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
       <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showExtraAlert(extra.name, extra.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
@@ -119,7 +122,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <h3>Seotud toimingud<br></h3>
+                            <h3>Seotud tegevused<br></h3>
                         </div>
                     </div>
                 </div>
@@ -141,9 +144,9 @@
     <!-- eslint-disable-next-line -->
     <tr v-for="activity in activities">
       <td>{{ activity.date }}</td>
-      <td>{{ activity.type }} ({{ activity.id }})</td>
-      <td>{{ activity.description}}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <td>{{ activity.type }}</td>
+      <td>{{ activity.description}} {{activity.id}}</td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="activityEditModal(activity)" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
       <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showActivityAlert(activity.type, activity.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
@@ -192,9 +195,9 @@
     <tr v-for="access in grandtheftauto">
       <td>{{ access.from }}</td>
       <td>{{ access.to }}</td>
-      <td>{{ access.userId }}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td>{{ access.name }}</td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="accessEditModal(access)" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showAccessAlert(access.name, access.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -206,10 +209,13 @@
 <script>
 import { mapGetters } from 'vuex'
 import NewExtra from '@/components/modals/new-extra'
+import EditExtra from '@/components/modals/edit-extra'
 import NewActivity from '@/components/modals/new-activity'
+import EditActivity from '@/components/modals/edit-activity'
 import NewAccess from '@/components/modals/new-access'
-export default {
+import EditAccess from '@/components/modals/edit-access'
 
+export default {
   name: 'car',
   computed: {
     ...mapGetters({ currentUser: 'currentUser' })
@@ -217,9 +223,7 @@ export default {
   mounted () {
     this.getVehicle()
     this.getVehicleActivities()
-    // this.getVehicleExtras()
-    // this.getVehicleActivities()
-    // this.getAccessList()
+    this.getAccessList()
   },
   props: [],
   data () {
@@ -231,7 +235,7 @@ export default {
       grandtheftauto: []
     }
   },
-  components: {NewExtra, NewActivity, NewAccess},
+  components: {NewExtra, EditExtra, EditActivity, NewActivity, NewAccess, EditAccess},
   methods: {
     showActivityAlert (activity, activityid) {
       this.$modal.show('dialog', {
@@ -257,6 +261,21 @@ export default {
           handler: () => {
             this.$modal.hide('dialog')
             this.deleteExtra(extraid)
+          }
+        },
+        { title: '', default: true, handler: () => {} },
+        { title: 'Tagasi' }]
+      })
+    },
+    showAccessAlert (access, accessid) {
+      this.$modal.show('dialog', {
+        title: 'Kas olete kindel?',
+        text: 'Olete valinud volituse "' + access + '" kustutamiseks. Seda sammu ei saa tagasi võtta.',
+        buttons: [{
+          title: 'Ḱustuta',
+          handler: () => {
+            this.$modal.hide('dialog')
+            this.deleteAccess(accessid)
           }
         },
         { title: '', default: true, handler: () => {} },
@@ -316,11 +335,29 @@ export default {
           'id': activity.activityId,
           'date': activity.from,
           'description': activity.content,
-          'type': activity.activityType
+          'type': activity.activityType,
+          'typeid': activity.typeId
         })
       })
-      //  console.log(res.data)
+      console.log(vm.activities)
       // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
+    },
+    deleteAccess (accessId) {
+      console.log('Attempting to delete extra')
+      this.$http.delete('/api/caraccess/' + accessId, {})
+        .then(res => this.processAccess(res))
+        .catch(res => this.processAccessFailed(res))
+    },
+    processAccess (res) {
+      if (res.status !== 200) {
+        this.processExtraFailed(res)
+      }
+      this.$toasted.show('Volitus edukalt kustutatud!').goAway(3000)
+    },
+    processAccessFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Viga volituse kustutamisel').goAway(3000)
     },
     deleteExtra (extraId) {
       console.log('Attempting to delete extra')
@@ -362,7 +399,7 @@ export default {
       this.$toasted.show('Viga tegevuste laadimisel').goAway(3000)
     },
     getAccessList () {
-      this.$http.get('/api/caraccess/', {})
+      this.$http.get('/api/caraccess/' + this.$route.params.id, {})
         .then(res => this.fetchAccess(res))
         .catch(res => this.fetchAccessFailed(res))
     },
@@ -374,10 +411,11 @@ export default {
       vm.grandtheftauto = []
       res.data.forEach(function (access) {
         // console.log('Found property ' + prop.property.name)
-        if (access.car.id === vm.$route.params.id && access.userId !== vm.currentUser.UserId) {
+        if (access.UserId != vm.currentUser.UserId) {
           vm.grandtheftauto.push({
             'id': access.accessId,
             'userid': access.userId,
+            'name': access.name,
             'from': access.from,
             'to': access.to
           })
@@ -396,13 +434,25 @@ export default {
       console.log('triggered extra modal')
       this.$modal.show('new-extra')
     },
+    extraEditModal (props) {
+      console.log('triggered extra edit modal')
+      this.$modal.show('edit-extra', props)
+    },
     activityModal () {
       console.log('triggered activity modal')
       this.$modal.show('new-activity')
     },
+    activityEditModal (props) {
+      console.log('triggered activity edit modal')
+      this.$modal.show('edit-activity', props)
+    },
     accessModal () {
       console.log('triggered access modal')
       this.$modal.show('new-access')
+    },
+    accessEditModal (props) {
+      console.log('triggered access modal')
+      this.$modal.show('edit-access', props)
     },
     kys () {
       this.$toasted.show('Idi nahui bljat').goAway(3000)
