@@ -99,11 +99,11 @@ export default {
     login () {
       this.$http.post('/account/login', { email: this.email, password: this.password })
         .then(request => this.loginSuccessful(request))
-        .catch(() => this.loginFailed())
+        .catch(res => this.loginFailed(res))
     },
     loginSuccessful (req) {
       if (req.status !== 200) {
-        this.loginFailed()
+        this.loginFailed(req)
         return
       }
       this.error = false
@@ -113,7 +113,8 @@ export default {
       this.$toasted.show('Edukalt sisselogitud!').goAway(3000)
       this.$router.push(this.$route.query.redirect || '/dashboard')
     },
-    loginFailed () {
+    loginFailed (res) {
+      console.log(res)
       this.error = 'Vale e-posti aadress või parool!'
       this.$toasted.show('Vale e-posti aadress või parool').goAway(3000)
       this.$store.dispatch('logout')

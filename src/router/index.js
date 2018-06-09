@@ -9,6 +9,8 @@ import Car from '@/components/Car'
 import CarOverview from '@/components/CarOverview'
 import Profile from '@/components/Profile'
 import PageNotFound from '@/components/PageNotFound'
+
+import AdminDashboard from '@/components/admin/Dashboard'
 Vue.use(Router)
 
 export default new Router({
@@ -52,6 +54,11 @@ export default new Router({
       path: '/me',
       name: 'Profile',
       component: Profile
+    },
+    {
+      path: '/superman',
+      name: 'AdminDashboard',
+      component: AdminDashboard
     },
     {
       path: '*',
