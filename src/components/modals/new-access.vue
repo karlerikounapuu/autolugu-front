@@ -39,7 +39,7 @@ export default {
   methods: {
     newAccess () {
       if (this.accessuser) {
-        if (this.accessuser == this.currentUser.UserId) {
+        if (this.accessuser === this.currentUser.UserId) {
           this.$modal.hide('new-access')
           Vue.toasted.show('Sul juba on volitus, idu x)').goAway(3000)
           return
@@ -48,7 +48,7 @@ export default {
         this.$http.post('/api/caraccess', {
           car: {id: this.$route.params.id},
           userId: this.accessuser})
-        .then(res => this.accessSuccessful(res))
+          .then(res => this.accessSuccessful(res))
           .catch(res => this.accessFailed(res))
       } else {
         Vue.toasted.show('Palun täitke kõik väljad!').goAway(3000)

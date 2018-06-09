@@ -18,22 +18,22 @@
                     <div class="row">
                         <div class="col-md-3">
                             <a class="block" href="#">
-                                <div @click="extraModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa varustus</p> </span> </div>
+                                <div @click.prevent="extraModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Gears"></i> <span class="h5 color--primary"><p>Lisa varustus</p> </span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus</p></span> </div>
+                                <div @click.prevent="activityModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Repair"></i> <span class="h5 color--primary"><p>Lisa uus tegevus</p></span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="accessModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Checked-User"></i> <span class="h5 color--primary"><p>Anna kasutajale ligipääs<br></p></span> </div>
+                                <div @click.prevent="accessModal()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Checked-User"></i> <span class="h5 color--primary"><p>Anna kasutajale ligipääs<br></p></span> </div>
                             </a>
                         </div>
                         <div class="col-md-3">
                             <a href="#" class="block">
-                                <div @click="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Eye"></i> <span class="h5 color--primary"><p>Vaata kogu informatsiooni</p></span> </div>
+                                <div @click.prevent="kys()" class="feature boxed boxed--border border--round"> <i class="icon--lg icon-Eye"></i> <span class="h5 color--primary"><p>Vaata kogu informatsiooni</p></span> </div>
                             </a>
                         </div>
                     </div>
@@ -105,10 +105,10 @@
     <!-- eslint-disable-next-line -->
     <tr v-for="extra in extras">
       <td>{{ extra.category }}</td>
-      <td>{{ extra.name }}</td>
+      <td>{{ extra.name }} ({{ extra.id }})</td>
       <td>{{ extra.description}}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showExtraAlert(extra.name, extra.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -141,10 +141,10 @@
     <!-- eslint-disable-next-line -->
     <tr v-for="activity in activities">
       <td>{{ activity.date }}</td>
-      <td>{{ activity.type }}</td>
+      <td>{{ activity.type }} ({{ activity.id }})</td>
       <td>{{ activity.description}}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showActivityAlert(activity.type, activity.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -193,8 +193,8 @@
       <td>{{ access.from }}</td>
       <td>{{ access.to }}</td>
       <td>{{ access.userId }}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()" href="#"><i style="text-decoration: none;" class="icon--sm icon-Pencil"></i></a>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" @click.prevent="kys()"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -233,6 +233,36 @@ export default {
   },
   components: {NewExtra, NewActivity, NewAccess},
   methods: {
+    showActivityAlert (activity, activityid) {
+      this.$modal.show('dialog', {
+        title: 'Kas olete kindel?',
+        text: 'Olete valinud tegevuse "' + activity + '" kustutamiseks. Seda sammu ei saa tagasi võtta.',
+        buttons: [{
+          title: 'Ḱustuta',
+          handler: () => {
+            this.$modal.hide('dialog')
+            this.deleteActivity(activityid)
+          }
+        },
+        { title: '', default: true, handler: () => {} },
+        { title: 'Tagasi' }]
+      })
+    },
+    showExtraAlert (extra, extraid) {
+      this.$modal.show('dialog', {
+        title: 'Kas olete kindel?',
+        text: 'Olete valinud objekti "' + extra + '" kustutamiseks. Seda sammu ei saa tagasi võtta.',
+        buttons: [{
+          title: 'Ḱustuta',
+          handler: () => {
+            this.$modal.hide('dialog')
+            this.deleteExtra(extraid)
+          }
+        },
+        { title: '', default: true, handler: () => {} },
+        { title: 'Tagasi' }]
+      })
+    },
     getVehicle () {
       this.$http.get('/api/car/' + this.$route.params.id, {})
         .then(res => this.fetchVehicle(res))
@@ -265,7 +295,7 @@ export default {
     },
     fetchVehicleFailed (res) {
       console.log('Fetching error.' + res)
-      //this.$router.push('/404')
+      this.$router.push('/404')
       this.$toasted.show('Can not fetch car').goAway(3000)
     },
     getVehicleActivities () {
@@ -292,10 +322,44 @@ export default {
       //  console.log(res.data)
       // console.log('Nimi: ' + res.data.name + ' Mark: ' + res.data.make.name + ' Mudel: ' + res.data.model.name)
     },
+    deleteExtra (extraId) {
+      console.log('Attempting to delete extra')
+      this.$http.delete('/api/carextras/' + extraId, {})
+        .then(res => this.processExtra(res))
+        .catch(res => this.processExtraFailed(res))
+    },
+    processExtra (res) {
+      if (res.status !== 200) {
+        this.processExtraFailed(res)
+      }
+      this.$toasted.show('Lisavarustus edukalt kustutatud!').goAway(3000)
+    },
+    processExtraFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Viga lisavarustuse kustutamisel').goAway(3000)
+    },
+    deleteActivity (activityId) {
+      console.log('Attempting to delete activity')
+      this.$http.delete('/api/caractivity/' + activityId, {})
+        .then(res => this.processActivity(res))
+        .catch(res => this.processActivityFailed(res))
+    },
+    processActivity (res) {
+      if (res.status !== 200) {
+        this.processActivityFailed(res)
+      }
+      this.$toasted.show('Tegevus edukalt kustutatud!').goAway(3000)
+    },
+    processActivityFailed (res) {
+      //  this.$router.push('/404')
+      console.log('Fetching error.' + res)
+      this.$toasted.show('Viga tegevuste kustutamisel').goAway(3000)
+    },
     fetchActivityFailed (res) {
       //  this.$router.push('/404')
       console.log('Fetching error.' + res)
-      this.$toasted.show('Can not fetch activities')
+      this.$toasted.show('Viga tegevuste laadimisel').goAway(3000)
     },
     getAccessList () {
       this.$http.get('/api/caraccess/', {})
@@ -310,13 +374,13 @@ export default {
       vm.grandtheftauto = []
       res.data.forEach(function (access) {
         // console.log('Found property ' + prop.property.name)
-        if(access.car.id == vm.$route.params.id && access.userId != vm.currentUser.UserId) {
-        vm.grandtheftauto.push({
-          'id': access.accessId,
-          'userid': access.userId,
-          'from': access.from,
-          'to': access.to
-        })
+        if (access.car.id === vm.$route.params.id && access.userId !== vm.currentUser.UserId) {
+          vm.grandtheftauto.push({
+            'id': access.accessId,
+            'userid': access.userId,
+            'from': access.from,
+            'to': access.to
+          })
         }
       })
       console.log('Discovered ' + vm.grandtheftauto.length + ' accesses to car')
