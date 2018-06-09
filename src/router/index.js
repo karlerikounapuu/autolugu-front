@@ -11,6 +11,7 @@ import Profile from '@/components/Profile'
 import PageNotFound from '@/components/PageNotFound'
 
 import AdminDashboard from '@/components/admin/Dashboard'
+import UserLogs from '@/components/admin/Lauaviin'
 Vue.use(Router)
 
 export default new Router({
@@ -59,6 +60,11 @@ export default new Router({
       path: '/superman',
       name: 'AdminDashboard',
       component: AdminDashboard
+    },
+    {
+      path: '/superman/userlog/:id',
+      name: 'UserLogs',
+      component: UserLogs
     },
     {
       path: '*',

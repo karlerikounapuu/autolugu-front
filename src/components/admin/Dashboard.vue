@@ -67,7 +67,7 @@
     </tr>
   </tbody>
 </table>
-<p v-else>Ühtegi kasutajakontot pole süsteemi lisatud.</p>
+<p v-else>Ühtegi logi pole süsteemi salvestatud.</p>
 </div>
 </section>
             <section class="space--xxs" style="padding-top: 0;">
@@ -98,8 +98,8 @@
       <td>{{ acc.firstname }}</td>
       <td>{{ acc.lastname }}</td>
       <td>{{ acc.lastlogin }}</td>
-      <td><center><a style="padding-right: 10px;" class="can-i-have-some-sleep-please" @click.prevent="extraEditModal(extra)" href="#"><i style="text-decoration: none;" class="icon--sm icon-Lock"></i></a>
-      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showExtraAlert(extra.name, extra.id)"><i style="text-decoration: none;" class="icon--sm icon-Close"></i></a></center></td>
+      <td><center><router-link style="padding-right: 10px;" class="can-i-have-some-sleep-please" :to="'/superman/userlog/' + acc.identityId"><i style="text-decoration: none;" class="icon--sm icon-Receipt"></i></router-link>
+      <a style="padding-left: 10px;" class="can-i-have-some-sleep-please" href="#" @click.prevent="showIdentityAlert(acc.firstname + ' ' + acc.lastname,acc.id)"><i style="text-decoration: none;" class="icon--sm icon-Fingerprint"></i></a></center></td>
     </tr>
   </tbody>
 </table>
@@ -137,6 +137,21 @@ export default {
   },
   components: {EditPassword},
   methods: {
+    showIdentityAlert (username, userid) {
+      this.$modal.show('dialog', {
+        title: 'Kas olete kindel?',
+        text: 'Olete valinud tegevuse siseneda kasutajasse "' + username + '". Teid logitakse välja. Seda sammu ei saa tagasi võtta.',
+        buttons: [{
+          title: 'Minek',
+          handler: () => {
+            this.$modal.hide('dialog')
+            this.getUserToken(userid)
+          }
+        },
+        { title: '', default: true, handler: () => {} },
+        { title: 'Tagasi' }]
+      })
+    },
     getAccounts () {
       this.$http.get('/api/customers/', {})
         .then(res => this.fetchAccounts(res))
@@ -189,6 +204,31 @@ export default {
       console.log('Fetching error.' + res)
       // this.$router.push('/404')
       this.$toasted.show('Ei saa lugeda logisid').goAway(3000)
+    },
+    getUserToken (token) {
+      this.$http.get('/api/AdminToken/' + token, {})
+        .then(res => this.fetchToken(res))
+        .catch(res => this.fetchTokenFailed(res))
+    },
+    fetchToken (res) {
+      if (res.status !== 200) {
+        this.fetchTokenFailed(res)
+      }
+
+      if (res.data.result) {
+        // this.$toasted.show(res.data.result).goAway(3000)
+        localStorage.token = res.data.result
+        this.$store.dispatch('login')
+        this.$toasted.show('Kasutaja vahetus tehtud!').goAway(3000)
+        this.$router.push('/dashboard')
+      } else {
+        this.fetchTokenFailed(res)
+      }
+    },
+    fetchTokenFailed (res) {
+      console.log('Fetching error.' + res)
+      // this.$router.push('/404')
+      this.$toasted.show('Kasutaja tokeni saamine ebaõnnestus').goAway(3000)
     },
     passwordEditModal () {
       console.log('triggered password modal')
